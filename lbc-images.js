@@ -37,7 +37,11 @@ request(url, function(error, response, body) {
         var $ = cheerio.load(body);
 
         // Titre de l'annonce
-        var title = $('.lbcContainer h1').text();
+        var title = '';
+        if ($('.lbcContainer h1').length > 0)
+            title = $('.lbcContainer h1').text();
+        else if ($('#main header h1').length > 0)
+            title = $('#main header h1').text();
 
         console.log("\n");
         console.log('[Récupération des images de l\'annonce "'+title+'"]');
@@ -64,6 +68,9 @@ request(url, function(error, response, body) {
                 var bg = $(this).css('background-image');
                 var image = bg.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
 
+                if (image.indexOf("//") == 0)
+                    image = "http:"+image;
+
                 getImage(image, params.directory);
             });
         }
@@ -73,6 +80,9 @@ request(url, function(error, response, body) {
             $('.carousel .thumbnails .thumb').each(function(){
                 var image = $(this).find('img').attr('src');
                 image = image.replace('/thumbs/', '/images/');
+
+                if (image.indexOf("//") == 0)
+                    image = "http:"+image;
 
                 getImage(image, params.directory);
             });
