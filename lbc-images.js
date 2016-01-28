@@ -48,6 +48,11 @@ request(url, function(error, response, body) {
         {
             $('.lbcImages meta[itemprop="image"]').each(function(){
                 var image = $(this).attr('content');
+                    
+                image = image.replace('/thumbs/', '/images/');
+
+                if (image.indexOf("//") == 0)
+                    image = "http:"+image;
 
                 getImage(image, params.directory);
             });
