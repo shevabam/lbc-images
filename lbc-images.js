@@ -104,9 +104,9 @@ request(url, function(error, response, body) {
                         var images = Array();
                         eval(datas);
                         
-                        for (var i = 0; i < images.length; i++)
+                        for (var j = 0; j < images.length; j++)
                         {
-                            var image = images[i];
+                            var image = images[j];
                             image = image.replace('/thumbs/', '/images/');
                             image = image.replace('/xxl/', '/images/');
 
@@ -114,7 +114,7 @@ request(url, function(error, response, body) {
                                 image = "http:"+image;
 
                             extension = image.split('.').pop();
-                            filename = slugify(title)+'_'+(i+1)+'.'+extension;
+                            filename = slugify(title)+'_'+(j+1)+'.'+extension;
 
                             getImage(image, params.directory, filename);
                         }
