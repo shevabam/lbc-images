@@ -14,6 +14,7 @@ var request = require("request");
 var cheerio = require("cheerio");
 var fs = require("fs");
 var download = require('url-download');
+var slugify = require('slugify');
 
 
 // Paramètres du script
@@ -37,7 +38,14 @@ request(url, function(error, response, body) {
         var $ = cheerio.load(body);
 
         // Titre de l'annonce
-        var title = $('.lbcContainer h1').text();
+        var title = 'lbc';
+
+        if ($('.lbcContainer h1').length > 0)
+            title = $('.lbcContainer h1').text();
+        else if ($('#main header h1').length > 0)
+            title = $('#main header h1').text();
+
+        title = title.trim();
 
         console.log("\n");
         console.log('[Récupération des images de l\'annonce "'+title+'"]');
@@ -54,7 +62,10 @@ request(url, function(error, response, body) {
                 if (image.indexOf("//") == 0)
                     image = "http:"+image;
 
-                getImage(image, params.directory);
+                extension = image.split('.').pop();
+                filename = slugify(title)+'_'+(i+1)+'.'+extension;
+
+                getImage(image, params.directory, filename);
             });
         }
         // 2ème méthode, on regarde dans #thumbs_carousel
@@ -64,18 +75,52 @@ request(url, function(error, response, body) {
                 var bg = $(this).css('background-image');
                 var image = bg.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
 
-                getImage(image, params.directory);
+                if (image.indexOf("//") == 0)
+                    image = "http:"+image;
+
+                extension = image.split('.').pop();
+                filename = slugify(title)+'_'+(i+1)+'.'+extension;
+
+                getImage(image, params.directory, filename);
             });
         }
         // 3ème méthode, nouvelle IHM
-        else if ($('.carousel .thumbnails') > 0)
+        else if ($('.carousel .thumbnails').length > 0)
         {
-            $('.carousel .thumbnails .thumb').each(function(){
-                var image = $(this).find('img').attr('src');
-                image = image.replace('/thumbs/', '/images/');
+            if ($('.adview_main script').length > 0)
+            {
+                var images_script = $('.adview_main script');
 
-                getImage(image, params.directory);
-            });
+                if (images_script != '')
+                {
+                    for (var i = 0; i < images_script.length; i++)
+                    {
+                        var datas = images_script[i]['firstChild']['data'];
+
+                        var lines = datas.split("\n").slice(2).slice(0, -10).join("\n");
+
+                        datas = lines;
+                        
+                        var images = Array();
+                        eval(datas);
+                        
+                        for (var i = 0; i < images.length; i++)
+                        {
+                            var image = images[i];
+                            image = image.replace('/thumbs/', '/images/');
+                            image = image.replace('/xxl/', '/images/');
+
+                            if (image.indexOf("//") == 0)
+                                image = "http:"+image;
+
+                            extension = image.split('.').pop();
+                            filename = slugify(title)+'_'+(i+1)+'.'+extension;
+
+                            getImage(image, params.directory, filename);
+                        }
+                    }
+                }
+            }
         }
         else
         {
@@ -93,13 +138,14 @@ request(url, function(error, response, body) {
 
 
 // Télécharge une image et la met dans un répertoire
-function getImage(url, dir)
+function getImage(url, dir, filename)
 {
     if (!fs.existsSync(dir))
     {
         fs.mkdirSync(dir);
     }
 
-    console.log('Téléchargement de : '+url);
-    download(url, dir);
+    download(url, dir, {outputName: filename}).on('done', function(){
+        console.log('Téléchargement de : '+filename);
+    });
 }

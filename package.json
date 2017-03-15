@@ -1,21 +1,27 @@
 {
   "name": "lbc-images",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Permet de télécharger les images d'une annonce leboncoin.fr",
+  "author": "ShevAbam",
+  "keywords": [
+    "leboncoin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shevabam/lbc-images"
+  },
+  "bugs": {
+    "url": "https://github.com/shevabam/lbc-images/issues"
+  },
+  "homepage": "https://github.com/shevabam/lbc-images",
   "main": "lbc-images.js",
   "dependencies": {
     "cheerio": "^0.19.0",
     "fs": "0.0.2",
     "request": "^2.67.0",
+    "slugify": "^1.1.0",
     "url-download": "0.0.4"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": {
-    "email": "me@shevarezo.fr",
-    "name": "ShevAbam"
-  },
   "license": "ISC"
 }
