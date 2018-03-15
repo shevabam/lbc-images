@@ -44,6 +44,8 @@ request(url, function(error, response, body) {
             title = $('.lbcContainer h1').text();
         else if ($('#main header h1').length > 0)
             title = $('#main header h1').text();
+        else if ($('div[data-qa-id="adview_spotlight_description_container"]').length > 0)
+            title = $('div[data-qa-id="adview_spotlight_description_container"] h1').text();
 
         title = title.trim();
 
@@ -120,6 +122,26 @@ request(url, function(error, response, body) {
                         }
                     }
                 }
+            }
+        }
+        // 4ème méthode (IHM 02/2018)
+        else if ($('div[data-qa-id="slideshow_thumbnails_container"]').length > 0)
+        {
+            var images_script = $('script').eq(7).text();
+            
+            var json = images_script.match(/window.FLUX_STATE = (.*)/);
+            var datas = JSON.parse(json[1]);
+
+            var images = datas.adview.images.urls_large;
+
+            for (var i = 0; i < images.length; i++)
+            {
+                var image = images[i];
+
+                extension = image.split('.').pop();
+                filename = slugify(title)+'_'+(i+1)+'.'+extension;
+
+                getImage(image, params.directory, filename);
             }
         }
         else
