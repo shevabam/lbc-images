@@ -1,6 +1,6 @@
 {
   "name": "lbc-images",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Permet de télécharger les images d'une annonce leboncoin.fr",
   "author": "ShevAbam",
   "keywords": [
