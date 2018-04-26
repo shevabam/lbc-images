@@ -125,9 +125,9 @@ request(url, function(error, response, body) {
             }
         }
         // 4ème méthode (IHM 02/2018)
-        else if ($('div[data-qa-id="slideshow_thumbnails_container"]').length > 0)
+        else if ($('div[data-qa-id="slideshow_container"]').length > 0)
         {
-            var images_script = $('script').eq(7).text();
+            var images_script = $('script').eq(8).text();
             
             var json = images_script.match(/window.FLUX_STATE = (.*)/);
             var datas = JSON.parse(json[1]);
